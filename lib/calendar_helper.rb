@@ -85,7 +85,8 @@ module CalendarHelper
       :previous_month_text => nil,
       :next_month_text     => nil,
       :month_header        => true,
-      :calendar_title      => Date::MONTHNAMES[options[:month]]
+      :calendar_title      => Date::MONTHNAMES[options[:month]],
+      :event_dates         => {}
     }
     options = defaults.merge options
 
@@ -95,7 +96,8 @@ module CalendarHelper
     first_weekday = first_day_of_week(options[:first_day_of_week])
     last_weekday = last_day_of_week(options[:first_day_of_week])
     
-    day_names = Date::DAYNAMES.dup
+    # day_names = Date::DAYNAMES.dup
+    day_names = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
     first_weekday.times do
       day_names.push(day_names.shift)
     end
@@ -136,18 +138,27 @@ module CalendarHelper
         cal << %(">#{d.day}</td>)
       end
     end unless first.wday == first_weekday
+    
     first.upto(last) do |cur|
       cell_text, cell_attrs = block.call(cur)
-      cell_text  ||= cur.mday
+      event_dates ||= options[:event_dates]
+      cell_text  ||= cur.mday  
       cell_attrs ||= {}
       cell_attrs[:class] ||= options[:day_class]
       cell_attrs[:class] += " weekendDay" if [0, 6].include?(cur.wday)
       today = (Time.respond_to?(:zone) && !(zone = Time.zone).nil? ? zone.now.to_date : Date.today)
       cell_attrs[:class] += " today" if (cur == today) and options[:show_today]
+
+      unless event_dates["#{cur.strftime("%Y-%m-%d")}"].blank?
+        cell_attrs[:class] += " selectable"
+        cell_text = link_to cur.mday, event_dates["#{cur.strftime("%Y-%m-%d")}"]
+      end
+
       cell_attrs = cell_attrs.map {|k, v| %(#{k}="#{v}") }.join(" ")
       cal << "<td #{cell_attrs}>#{cell_text}</td>"
       cal << "</tr><tr>" if cur.wday == last_weekday
     end
+    
     (last + 1).upto(beginning_of_week(last + 7, first_weekday) - 1)  do |d|
       cal << %(<td class="#{options[:other_month_class]})
       cal << " weekendDay" if weekend?(d)
