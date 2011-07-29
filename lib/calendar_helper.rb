@@ -151,7 +151,7 @@ module CalendarHelper
 
       unless event_dates["#{cur.strftime("%Y-%m-%d")}"].blank?
         cell_attrs[:class] += " selectable"
-        cell_text = link_to cur.mday, event_dates["#{cur.strftime("%Y-%m-%d")}"], :title => "#{cur.mday} - #{event_dates["#{cur.strftime("%Y-%m-%d")}"]}"
+        cell_text = link_to cur.mday, event_dates["#{cur.strftime("%Y-%m-%d")}"][:link], :title => "#{cur.mday} - #{event_dates["#{cur.strftime("%Y-%m-%d")}"][:title]}"
       end
 
       cell_attrs = cell_attrs.map {|k, v| %(#{k}="#{v}") }.join(" ")
