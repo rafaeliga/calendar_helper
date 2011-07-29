@@ -149,9 +149,12 @@ module CalendarHelper
       today = (Time.respond_to?(:zone) && !(zone = Time.zone).nil? ? zone.now.to_date : Date.today)
       cell_attrs[:class] += " today" if (cur == today) and options[:show_today]
 
-      unless event_dates["#{cur.strftime("%Y-%m-%d")}"].blank?
+      unless event_dates["#{cur.strftime("%Y-%m-%d")}".to_sym].blank?
         cell_attrs[:class] += " selectable"
-        cell_text = link_to cur.mday, event_dates["#{cur.strftime("%Y-%m-%d")}"][:link], :title => "#{cur.mday} - #{event_dates["#{cur.strftime("%Y-%m-%d")}"][:title]}"
+				link = event_dates["#{cur.strftime("%Y-%m-%d")}".to_sym].first[:link]
+				title = "#{event_dates["#{cur.strftime("%Y-%m-%d")}".to_sym].collect{|h| h[:title]}.join('<br />')}"
+				
+        cell_text = link_to cur.mday, link, :title => title
       end
 
       cell_attrs = cell_attrs.map {|k, v| %(#{k}="#{v}") }.join(" ")
