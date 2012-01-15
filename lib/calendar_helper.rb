@@ -116,7 +116,7 @@ module CalendarHelper
         colspan=7
       end
 			next_link = calendar_next_path(:month => options[:month], :year => options[:year], :format => :js)
-      cal << %(<th colspan="#{colspan}" class="#{options[:month_name_class]}">#{options[:calendar_title]}</th>)
+      cal << %(<th colspan="#{colspan}" class="#{options[:month_name_class]}">#{options[:calendar_title]} #{options[:year]}</th>)
       cal << %(<th colspan="2">#{link_to(options[:next_month_text], next_link, :remote => true, :class => 'simple_link')}</th>) if options[:next_month_text]
       cal << %(</tr>)
     end
